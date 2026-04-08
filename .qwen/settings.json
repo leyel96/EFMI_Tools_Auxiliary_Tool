@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(C:\\Users\\yein\\AppData\\Roaming\\XXMI Launcher\\EFMI\\FrameAnalysis-2026-04-02-235628/**)",
+      "Bash(python *)",
+      "Bash(uv *)",
+      "Bash(c:\\users\\yein\\.local\\bin\\uv.exe *)",
+      "Bash(dir *)"
+    ]
+  },
+  "$version": 3
+}
