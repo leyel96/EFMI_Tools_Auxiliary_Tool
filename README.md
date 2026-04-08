@@ -79,7 +79,7 @@
 <img src="image/test1.PNG">
 2. 특정 mesh 올바른 위치로 이동
 <img src="image/test2-1.PNG">
-로시의 경우 **calldaw 13과 14** 눈과 눈섭 부분의 mesh 분할과 이동이 필요하다. 
+로시의 경우 **draw_call 13과 14** 눈과 눈섭 부분의 mesh 분할과 이동이 필요하다. 
 <img src="image/test2-2.PNG">
 3. FrameAnalysis-deduped속에 위치한 texture 파일을 각 부위에 적용
 <img src="image/test3.PNG">
