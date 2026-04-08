@@ -4,14 +4,20 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="320efe37-8a12-4c0a-900d-22198a2c7a31" name="변경" comment="" />
+    <list default="true" id="320efe37-8a12-4c0a-900d-22198a2c7a31" name="변경" comment="First upload">
+      <change afterPath="$PROJECT_DIR$/image/test1.PNG" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/image/test2-1.PNG" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/image/test2-2.PNG" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/image/test3.PNG" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="17" />
+    <option name="cachedIndexableFilesCount" value="19" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -23,6 +29,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;leyel96&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/leyel96/EFMI_Tools_Auxiliary_Tool.git&quot;,
+    &quot;accountId&quot;: &quot;3d523ea1-a1e9-4342-b22f-7c131c16eb9c&quot;
+  }
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
@@ -42,11 +60,13 @@
     "Python.test.executor": "Run",
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "git-widget-placeholder": "master",
     "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "C:/Users/yein/PycharmProjects/엔드필드메쉬추출시도4",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -56,6 +76,11 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\yein\PycharmProjects\엔드필드메쉬추출시도4" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -79,12 +104,26 @@
       <workItem from="1775587525928" duration="2409000" />
       <workItem from="1775604253813" duration="2499000" />
       <workItem from="1775651267795" duration="3386000" />
-      <workItem from="1775668621701" duration="293000" />
+      <workItem from="1775668621701" duration="642000" />
+      <workItem from="1775670710107" duration="2796000" />
     </task>
+    <task id="LOCAL-00001" summary="First upload">
+      <option name="closed" value="true" />
+      <created>1775669156320</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1775669156320</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="First upload" />
+    <option name="LAST_COMMIT_MESSAGE" value="First upload" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/4$test.coverage" NAME="test 커버리지 결과" MODIFIED="1775315389909" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
