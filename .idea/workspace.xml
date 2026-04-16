@@ -4,12 +4,13 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="320efe37-8a12-4c0a-900d-22198a2c7a31" name="변경" comment="First upload">
-      <change afterPath="$PROJECT_DIR$/image/test1.PNG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/image/test2-1.PNG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/image/test2-2.PNG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/image/test3.PNG" afterDir="false" />
+    <list default="true" id="320efe37-8a12-4c0a-900d-22198a2c7a31" name="변경" comment="First upload Add description">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/엔드필드메쉬추출시도4.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/엔드필드메쉬추출시도4.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.qwen/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.qwen/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeshExtractor.exe" beforeDir="false" afterPath="$PROJECT_DIR$/MeshExtractor.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mesh_extractor_gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/mesh_extractor_gui.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,7 +18,8 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="19" />
+    <option name="cachedIndexableFilesCount" value="54380" />
+    <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -27,6 +29,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -60,11 +67,12 @@
     "Python.test.executor": "Run",
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "test",
     "junie.onboarding.icon.badge.shown": "true",
     "last_opened_file_path": "C:/Users/yein/PycharmProjects/엔드필드메쉬추출시도4",
     "node.js.detected.package.eslint": "true",
@@ -72,6 +80,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "ml.llm.LLMThirdPartyAiProvidersConfigurable",
     "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   }
@@ -105,7 +114,17 @@
       <workItem from="1775604253813" duration="2499000" />
       <workItem from="1775651267795" duration="3386000" />
       <workItem from="1775668621701" duration="642000" />
-      <workItem from="1775670710107" duration="2796000" />
+      <workItem from="1775670710107" duration="3043000" />
+      <workItem from="1775674589349" duration="262000" />
+      <workItem from="1776014893636" duration="98000" />
+      <workItem from="1776247483338" duration="268000" />
+      <workItem from="1776267179391" duration="375000" />
+      <workItem from="1776267571002" duration="46000" />
+      <workItem from="1776267691470" duration="613000" />
+      <workItem from="1776270520022" duration="3000" />
+      <workItem from="1776272265179" duration="5114000" />
+      <workItem from="1776277891783" duration="13000" />
+      <workItem from="1776279085723" duration="31000" />
     </task>
     <task id="LOCAL-00001" summary="First upload">
       <option name="closed" value="true" />
@@ -115,7 +134,39 @@
       <option name="project" value="LOCAL" />
       <updated>1775669156320</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="First upload Add description">
+      <option name="closed" value="true" />
+      <created>1775673553384</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1775673553384</updated>
+    </task>
+    <task id="LOCAL-00003" summary="First upload Add description">
+      <option name="closed" value="true" />
+      <created>1775673560016</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1775673560016</updated>
+    </task>
+    <task id="LOCAL-00004" summary="First upload Add description">
+      <option name="closed" value="true" />
+      <created>1775673708169</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1775673708169</updated>
+    </task>
+    <task id="LOCAL-00005" summary="First upload Add description">
+      <option name="closed" value="true" />
+      <created>1775674845594</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1775674845594</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -123,7 +174,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="First upload" />
-    <option name="LAST_COMMIT_MESSAGE" value="First upload" />
+    <MESSAGE value="First upload Add description" />
+    <option name="LAST_COMMIT_MESSAGE" value="First upload Add description" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/4$test.coverage" NAME="test 커버리지 결과" MODIFIED="1775315389909" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

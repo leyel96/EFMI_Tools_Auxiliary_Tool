@@ -5,7 +5,8 @@
       "Bash(python *)",
       "Bash(uv *)",
       "Bash(c:\\users\\yein\\.local\\bin\\uv.exe *)",
-      "Bash(dir *)"
+      "Bash(dir *)",
+      "Bash(findstr *)"
     ]
   },
   "$version": 3
