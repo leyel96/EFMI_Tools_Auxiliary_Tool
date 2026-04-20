@@ -55,6 +55,7 @@ class MeshExtractorGUI:
         self.ext_import_output_dir = tk.StringVar(value="./Extracted_OBJ")
         self.ext_import_export_individual = tk.BooleanVar(value=True)
         self.ext_import_export_combined = tk.BooleanVar(value=False)
+        self.ext_import_coord_system = tk.StringVar(value="reference")
 
         # 창 아이콘 설정
         self._set_window_icon()
@@ -446,6 +447,21 @@ class MeshExtractorGUI:
             variable=self.ext_import_export_combined,
         ).grid(row=1, column=0, sticky=tk.W, pady=2)
 
+        # 좌표계 선택
+        coord_frame = ttk.LabelFrame(self.tab_ext_import, text="좌표계 설정", padding=10)
+        coord_frame.pack(fill=tk.X, pady=5)
+        
+        ttk.Label(coord_frame, text="OBJ 내보내기 좌표계:").grid(
+            row=0, column=0, sticky=tk.W, padx=(0, 10), pady=2
+        )
+        ttk.Combobox(
+            coord_frame,
+            textvariable=self.ext_import_coord_system,
+            values=["reference (Z-up)", "blender (Y-up)", "original (DirectX)"],
+            state="readonly",
+            width=35,
+        ).grid(row=0, column=1, padx=(0, 10), pady=2)
+
         # 실행 버튼
         btn_frame = ttk.Frame(self.tab_ext_import)
         btn_frame.pack(fill=tk.X, pady=5)
@@ -587,6 +603,15 @@ class MeshExtractorGUI:
         }
         display = self.coord_system.get()
         self.coord_system.set(mapping.get(display, "reference"))
+
+    def _get_coord_value(self, display_value):
+        """좌표계 표시값을 실제 값으로 변환"""
+        if "blender" in display_value.lower():
+            return "blender"
+        elif "original" in display_value.lower() or "directx" in display_value.lower():
+            return "original"
+        else:
+            return "reference"
 
     def _browse_input(self):
         """입력 디렉토리 선택"""
@@ -1167,6 +1192,7 @@ class MeshExtractorGUI:
         output_dir = self.ext_import_output_dir.get()
         do_individual = self.ext_import_export_individual.get()
         do_combined = self.ext_import_export_combined.get()
+        coord_system = self._get_coord_value(self.ext_import_coord_system.get())
 
         if not source_dir or not os.path.isdir(source_dir):
             messagebox.showerror("오류", "유효한 추출물 폴더를 선택해주세요.")
@@ -1187,19 +1213,19 @@ class MeshExtractorGUI:
         
         thread = threading.Thread(
             target=self._run_extracted_import_thread, 
-            args=(source_dir, output_dir, do_individual, do_combined),
+            args=(source_dir, output_dir, do_individual, do_combined, coord_system),
             daemon=True
         )
         thread.start()
 
-    def _run_extracted_import_thread(self, source_dir, output_dir, do_individual, do_combined):
+    def _run_extracted_import_thread(self, source_dir, output_dir, do_individual, do_combined, coord_system):
         """추출물 변환 실행 (백그라운드)"""
         try:
             from extracted_object_importer import ExtractedObjectImporter
             import time
             
             start_time = time.time()
-            importer = ExtractedObjectImporter()
+            importer = ExtractedObjectImporter(coordinate_system=coord_system)
             
             self._log(f"  폴더 로드 중: {source_dir}")
             meshes = importer.import_from_folder(source_dir)
@@ -1214,12 +1240,12 @@ class MeshExtractorGUI:
                 os.makedirs(output_dir, exist_ok=True)
 
             if do_individual:
-                self._log(f"  개별 OBJ 내보내는 중... (저장위치: {output_dir})")
+                self._log(f"  개별 OBJ 내보내는 중... (좌표계: {coord_system}, 저장위치: {output_dir})")
                 importer.export_individual(meshes, output_dir)
             
             if do_combined:
                 combined_path = os.path.join(output_dir, "combined_mesh.obj")
-                self._log(f"  결합된 OBJ 내보내는 중: {combined_path}")
+                self._log(f"  결합된 OBJ 내보내는 중 (좌표계: {coord_system}): {combined_path}")
                 importer.export_combined(meshes, combined_path)
             
             elapsed = time.time() - start_time

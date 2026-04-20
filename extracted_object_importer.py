@@ -1,5 +1,5 @@
 import os
-import json
+import json, re
 import numpy as np
 import struct
 from pathlib import Path
@@ -13,14 +13,16 @@ class ExtractedObjectImporter:
     MeshData 객체로 변환하고 OBJ로 내보내는 클래스
     """
 
-    def __init__(self):
+    def __init__(self, coordinate_system: str = 'reference'):
         self.metadata = {}
+        self.coordinate_system = coordinate_system
 
     def import_from_folder(self, folder_path: str) -> List[MeshData]:
         """폴더에서 추출된 오브젝트 로드"""
         folder = Path(folder_path)
         metadata_path = folder / "Metadata.json"
         
+        # Metadata.json이 없어도 .fmt 파일들이 있으면 시도
         if not metadata_path.exists():
             print(f"Error: Metadata.json not found in {folder_path}")
             # Metadata.json이 없어도 .fmt 파일들이 있으면 시도
@@ -30,7 +32,6 @@ class ExtractedObjectImporter:
             
             components = []
             for fmt_file in fmt_files:
-                import re
                 match = re.search(r'Component (\d+)', fmt_file.name)
                 if match:
                     components.append({"id": int(match.group(1))})
@@ -245,14 +246,17 @@ class ExtractedObjectImporter:
     def export_combined(self, meshes: List[MeshData], output_path: str):
         """여러 MeshData를 하나의 OBJ로 결합하여 내보냄"""
         if not meshes:
-            return
+            return []
+        
         mesh_dict = {m.draw_call_id: m for m in meshes}
-        export_meshes_combined_obj(mesh_dict, output_path)
+        return export_meshes_combined_obj(mesh_dict, output_path, coord_system=self.coordinate_system)
 
     def export_individual(self, meshes: List[MeshData], output_dir: str):
         """여러 MeshData를 각각의 OBJ 파일로 내보냄"""
         if not meshes:
-            return
+            return []
+        
         mesh_dict = {m.draw_call_id: m for m in meshes}
         from obj_exporter import export_all_meshes_to_obj
-        export_all_meshes_to_obj(mesh_dict, output_dir)
+        return export_all_meshes_to_obj(mesh_dict, output_dir, coord_system=self.coordinate_system)
+
