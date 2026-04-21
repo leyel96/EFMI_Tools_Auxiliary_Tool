@@ -56,6 +56,11 @@ class MeshExtractorGUI:
         self.ext_import_export_individual = tk.BooleanVar(value=True)
         self.ext_import_export_combined = tk.BooleanVar(value=False)
 
+        # 모드 익스포트 관련 변수
+        self.mod_export_obj_path = tk.StringVar()
+        self.mod_export_efmi_dir = tk.StringVar()
+        self.mod_export_output_dir = tk.StringVar(value="./Exported_Mod")
+
         # 창 아이콘 설정
         self._set_window_icon()
 
@@ -110,6 +115,11 @@ class MeshExtractorGUI:
         self.tab_ext_import = ttk.Frame(self.notebook, padding=10)
         self.notebook.add(self.tab_ext_import, text="추출물 변환 (Import)")
         self._build_extracted_import_tab()
+
+        # 탭 6: 모드 익스포트 (Mod Export)
+        self.tab_mod_export = ttk.Frame(self.notebook, padding=10)
+        self.notebook.add(self.tab_mod_export, text="모드 익스포트 (Mod Export)")
+        self._build_mod_export_tab()
 
         # 로그 (하단 공통)
         log_frame = ttk.LabelFrame(main_frame, text="로그", padding=10)
@@ -469,6 +479,76 @@ class MeshExtractorGUI:
             help_frame, text=help_text, justify=tk.LEFT, font=("", 9), foreground="gray"
         ).pack(anchor=tk.W)
 
+    def _build_mod_export_tab(self):
+        """모드 익스포트 탭"""
+        # 소스 설정
+        source_frame = ttk.LabelFrame(self.tab_mod_export, text="설정", padding=10)
+        source_frame.pack(fill=tk.X, pady=5)
+
+        ttk.Label(source_frame, text="수정된 OBJ 파일/폴더:").grid(
+            row=0, column=0, sticky=tk.W, pady=2
+        )
+        ttk.Entry(source_frame, textvariable=self.mod_export_obj_path, width=60).grid(
+            row=1, column=0, columnspan=2, padx=5, pady=2
+        )
+        
+        btn_frame_obj = ttk.Frame(source_frame)
+        btn_frame_obj.grid(row=1, column=2, pady=2)
+        
+        ttk.Button(
+            btn_frame_obj, text="파일", command=self._browse_mod_export_obj, width=6
+        ).pack(side=tk.LEFT, padx=1)
+        ttk.Button(
+            btn_frame_obj, text="폴더", command=self._browse_mod_export_obj_dir, width=6
+        ).pack(side=tk.LEFT, padx=1)
+
+        ttk.Label(source_frame, text="원본 추출물 폴더 (efmi_output):").grid(
+            row=2, column=0, sticky=tk.W, pady=(10, 2)
+        )
+        ttk.Label(source_frame, text="(Component .vb 및 Metadata.json)", font=("", 8)).grid(
+            row=2, column=1, sticky=tk.W, pady=2
+        )
+        ttk.Entry(source_frame, textvariable=self.mod_export_efmi_dir, width=60).grid(
+            row=3, column=0, columnspan=2, padx=5, pady=2
+        )
+        ttk.Button(
+            source_frame, text="찾아보기", command=self._browse_mod_export_efmi
+        ).grid(row=3, column=2, pady=2)
+
+        ttk.Label(source_frame, text="출력 저장 폴더 (Mod Output):").grid(
+            row=4, column=0, sticky=tk.W, pady=(10, 2)
+        )
+        ttk.Entry(source_frame, textvariable=self.mod_export_output_dir, width=60).grid(
+            row=5, column=0, columnspan=2, padx=5, pady=2
+        )
+        ttk.Button(source_frame, text="찾아보기", command=self._browse_mod_export_output).grid(
+            row=5, column=2, pady=2
+        )
+
+        # 실행 버튼
+        btn_frame = ttk.Frame(self.tab_mod_export)
+        btn_frame.pack(fill=tk.X, pady=10)
+
+        self.btn_mod_export = ttk.Button(
+            btn_frame, text="모드 익스포트 시작", command=self._start_mod_export
+        )
+        self.btn_mod_export.pack(side=tk.LEFT, padx=5)
+
+        # 설명
+        help_frame = ttk.Frame(self.tab_mod_export)
+        help_frame.pack(fill=tk.X, pady=5)
+
+        help_text = (
+            "모드 익스포트 (Mod Export):\n"
+            "1. 블렌더 등에서 수정된 OBJ 파일을 선택합니다. (정점 개수가 원본과 정확히 동일해야 함!)\n"
+            "2. EFMI 오브젝트 추출 탭에서 생성한 추출물 폴더(Metadata.json, .vb)를 선택합니다.\n"
+            "3. 지정된 출력 폴더에 3DMigoto용 모드 파일(.buf 및 mod.ini)이 생성됩니다.\n"
+            "4. 이 과정에서 수정된 법선(Normal)과 UV가 인코딩되어 원본 버퍼에 결합됩니다."
+        )
+        ttk.Label(
+            help_frame, text=help_text, justify=tk.LEFT, font=("", 9), foreground="gray"
+        ).pack(anchor=tk.W)
+
     def _build_lod_tab(self):
         """LOD 추출 탭"""
         # 소스 설정
@@ -651,6 +731,29 @@ class MeshExtractorGUI:
         dir_path = filedialog.askdirectory(title="출력 폴더 선택")
         if dir_path:
             self.efmi_extract_output_dir.set(dir_path)
+
+    def _browse_mod_export_obj(self):
+        file_path = filedialog.askopenfilename(
+            title="수정된 OBJ 파일 선택 (Combined.obj)",
+            filetypes=[("OBJ Files", "*.obj"), ("All Files", "*.*")]
+        )
+        if file_path:
+            self.mod_export_obj_path.set(file_path)
+            
+    def _browse_mod_export_obj_dir(self):
+        dir_path = filedialog.askdirectory(title="수정된 OBJ 폴더 선택 (Component_*.obj)")
+        if dir_path:
+            self.mod_export_obj_path.set(dir_path)
+
+    def _browse_mod_export_efmi(self):
+        dir_path = filedialog.askdirectory(title="원본 추출물 폴더 (Metadata.json 포함)")
+        if dir_path:
+            self.mod_export_efmi_dir.set(dir_path)
+
+    def _browse_mod_export_output(self):
+        dir_path = filedialog.askdirectory(title="모드 출력 폴더 선택")
+        if dir_path:
+            self.mod_export_output_dir.set(dir_path)
 
     def _log(self, message):
         """로그 추가"""
@@ -1328,6 +1431,55 @@ class MeshExtractorGUI:
             messagebox.showinfo("완료", message)
         else:
             messagebox.showerror("오류", message)
+
+    def _start_mod_export(self):
+        obj_path = self.mod_export_obj_path.get()
+        efmi_dir = self.mod_export_efmi_dir.get()
+        output_dir = self.mod_export_output_dir.get()
+
+        if not obj_path or not os.path.exists(obj_path):
+            messagebox.showwarning("경고", "유효한 수정된 OBJ 파일 또는 폴더를 선택하세요")
+            return
+        if not efmi_dir or not os.path.exists(efmi_dir):
+            messagebox.showwarning("경고", "유효한 원본 추출물 폴더(efmi_output)를 선택하세요")
+            return
+        if not output_dir:
+            messagebox.showwarning("경고", "모드 출력 폴더를 선택하세요")
+            return
+
+        self.btn_mod_export.configure(state=tk.DISABLED)
+        self.is_running = True
+        self.log_text.configure(state=tk.NORMAL)
+        self.log_text.delete(1.0, tk.END)
+        self.log_text.configure(state=tk.DISABLED)
+
+        self._log("모드 익스포트 시작...")
+
+        thread = threading.Thread(
+            target=self._run_mod_export, args=(obj_path, efmi_dir, output_dir), daemon=True
+        )
+        thread.start()
+
+    def _run_mod_export(self, obj_path, efmi_dir, output_dir):
+        try:
+            from mod_exporter import export_mod
+            
+            export_mod(obj_path, efmi_dir, output_dir)
+
+            self.root.after(0, self._log, "모드 익스포트 완료!")
+            self.root.after(
+                0, messagebox.showinfo, "완료", f"모드 익스포트 완료!\n출력 폴더: {output_dir}"
+            )
+
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            self.root.after(0, self._log, f"오류 발생: {str(e)}")
+            self.root.after(0, messagebox.showerror, "오류", f"익스포트 실패:\n{str(e)}")
+        finally:
+            self.root.after(0, lambda: self.btn_mod_export.configure(state=tk.NORMAL))
+            self.is_running = False
+
 
 
 def main():
