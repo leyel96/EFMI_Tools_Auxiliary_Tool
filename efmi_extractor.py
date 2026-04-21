@@ -329,9 +329,106 @@ class EFMIExtractor:
             total_verts = sum(dc.vertex_count for dc in sorted_dcs)
             return f"Character {total_verts}"
 
+    def _read_slot_data(self, buf_info: BufferInfo, expected_vertex_count: int) -> Optional[Tuple[bytes, int]]:
+        """
+        특정 VB 슬롯의 바이너리 데이터를 읽기
+        
+        Returns:
+            (raw_data, stride) 또는 None
+        """
+        try:
+            slot_info = parse_vertex_buffer_txt(str(buf_info.txt_path))
+            # 해당 슬롯의 stride 계산 (슬롯별 element의 byte_size 합)
+            slot_stride = slot_info.stride
+            file_size = os.path.getsize(buf_info.buf_path)
+            expected_size = slot_stride * expected_vertex_count
+
+            with open(buf_info.buf_path, 'rb') as f:
+                if file_size >= slot_info.byte_offset + expected_size:
+                    f.seek(slot_info.byte_offset)
+                    data = f.read(expected_size)
+                else:
+                    f.seek(0)
+                    data = f.read(file_size)
+
+            return data, slot_stride
+        except Exception as e:
+            print(f"  Warning: Failed to read slot data: {e}")
+            return None
+
+    def _merge_vb_slots(self, dc: DrawCallInfo) -> Tuple[bytes, int, list]:
+        """
+        VB0 + VB1 + VB2를 하나의 인터리빙된 VB로 병합
+        
+        Returns:
+            (merged_data, merged_stride, merged_elements)
+        """
+        vb0_buf = dc.buffers.get('VB0')
+        vb0_info = parse_vertex_buffer_txt(str(vb0_buf.txt_path))
+        vertex_count = vb0_info.vertex_count
+
+        # 각 슬롯의 데이터와 stride 수집
+        slot_data = {}  # slot -> (data, stride)
+        slot_strides = {}  # slot -> stride
+
+        for slot_key in ['VB0', 'VB1', 'VB2']:
+            buf_info = dc.buffers.get(slot_key)
+            if buf_info:
+                result = self._read_slot_data(buf_info, vertex_count)
+                if result:
+                    slot_num = int(slot_key[2])  # 'VB0' -> 0
+                    slot_data[slot_num] = result
+                    slot_strides[slot_num] = result[1]
+
+        # 병합 stride 계산
+        merged_stride = sum(slot_strides.get(s, 0) for s in sorted(slot_data.keys()))
+
+        # 각 슬롯의 element를 수집하고 offset 재계산
+        merged_elements = []
+        cumulative_offset = 0
+
+        for slot_num in sorted(slot_data.keys()):
+            slot_key = f'VB{slot_num}'
+            buf_info = dc.buffers.get(slot_key)
+            if not buf_info:
+                continue
+
+            slot_info = parse_vertex_buffer_txt(str(buf_info.txt_path))
+
+            for elem in slot_info.elements:
+                if elem.input_slot != slot_num:
+                    continue
+                # 새 element를 만들되, InputSlot=0, offset 재계산
+                new_elem = type(elem)(
+                    semantic_name=elem.semantic_name,
+                    semantic_index=elem.semantic_index,
+                    format_type=elem.format_type,
+                    byte_size=elem.byte_size,
+                    struct_fmt=elem.struct_fmt,
+                    input_slot=0,  # 모두 slot 0으로 통합
+                    byte_offset=cumulative_offset + elem.byte_offset,
+                )
+                merged_elements.append(new_elem)
+
+            cumulative_offset += slot_strides[slot_num]
+
+        # vertex 단위로 인터리빙
+        merged_bytes = bytearray()
+        for v_idx in range(vertex_count):
+            for slot_num in sorted(slot_data.keys()):
+                data, stride = slot_data[slot_num]
+                start = v_idx * stride
+                end = start + stride
+                if end <= len(data):
+                    merged_bytes.extend(data[start:end])
+                else:
+                    # 데이터 부족 시 0으로 채움
+                    merged_bytes.extend(b'\x00' * stride)
+
+        return bytes(merged_bytes), merged_stride, merged_elements
+
     def _extract_component(self, comp_id: int, dc: DrawCallInfo) -> Optional[EFMIComponent]:
-        """단일 컴포넌트 추출"""
-        # VB0 데이터 읽기
+        """단일 컴포넌트 추출 (VB0+VB1+VB2 병합)"""
         vb0_buf = dc.buffers.get('VB0')
         ib_buf = dc.buffers.get('IB')
 
@@ -339,26 +436,15 @@ class EFMIExtractor:
             return None
 
         try:
-            # VB 파일 읽기
-            with open(vb0_buf.buf_path, 'rb') as f:
-                vb0_info = parse_vertex_buffer_txt(str(vb0_buf.txt_path))
-
-                # byte_offset이 파일 크기보다 크면 0부터 읽기
-                file_size = os.path.getsize(vb0_buf.buf_path)
-                expected_size = vb0_info.stride * vb0_info.vertex_count
-
-                if vb0_buf.buf_path.stat().st_size >= vb0_info.byte_offset + expected_size:
-                    f.seek(vb0_info.byte_offset)
-                    vb_data = f.read(expected_size)
-                else:
-                    f.seek(0)
-                    vb_data = f.read(file_size)
+            # VB 슬롯 병합 (VB0 + VB1 + VB2 → 단일 인터리빙 VB)
+            vb_data, merged_stride, merged_elements = self._merge_vb_slots(dc)
 
             # IB 파일 읽기
             with open(ib_buf.buf_path, 'rb') as f:
                 ib_info = parse_index_buffer_txt(str(ib_buf.txt_path))
                 byte_size = 2  # uint16
                 expected_size = byte_size * ib_info.index_count
+                file_size = os.path.getsize(ib_buf.buf_path)
 
                 if ib_buf.buf_path.stat().st_size >= ib_info.byte_offset + expected_size:
                     f.seek(ib_info.byte_offset)
@@ -367,8 +453,11 @@ class EFMIExtractor:
                     f.seek(0)
                     ib_data = f.read(file_size)
 
-            # FMT 텍스트 생성
-            fmt_text = self._generate_fmt(vb0_info, ib_info)
+            # FMT 텍스트 생성 (병합된 레이아웃 기준)
+            vb0_info = parse_vertex_buffer_txt(str(vb0_buf.txt_path))
+            fmt_text = self._generate_fmt_merged(
+                merged_stride, merged_elements, vb0_info.topology, ib_info
+            )
 
             # POSITION 추출 (LOD 매칭용)
             positions = extract_vertices_numpy(
@@ -377,8 +466,8 @@ class EFMIExtractor:
                 target_slot=0,
             ).get('POSITION')
 
-            # VG 수 계산
-            vg_count = self._calculate_vg_count(vb0_buf)
+            # VG 수 계산 (VB2에서)
+            vg_count = self._calculate_vg_count_from_dc(dc)
 
             component = EFMIComponent(
                 component_id=comp_id,
@@ -400,25 +489,28 @@ class EFMIExtractor:
 
         except Exception as e:
             print(f"  Warning: Failed to extract component {comp_id}: {e}")
+            import traceback
+            traceback.print_exc()
             return None
 
-    def _generate_fmt(self, vb_info, ib_info) -> str:
-        """FMT 텍스트 생성"""
+    def _generate_fmt_merged(self, merged_stride: int, merged_elements: list,
+                             topology: str, ib_info) -> str:
+        """병합된 VB 레이아웃 기준 FMT 텍스트 생성"""
         fmt_lines = []
-        fmt_lines.append(f"stride: {vb_info.stride}")
-        fmt_lines.append(f"topology: {vb_info.topology}")
+        fmt_lines.append(f"stride: {merged_stride}")
+        fmt_lines.append(f"topology: {topology}")
 
         # IB 포맷
         ib_format = "DXGI_FORMAT_R16_UINT"
         fmt_lines.append(f"format: {ib_format}")
 
-        # VB 요소
-        for i, elem in enumerate(vb_info.elements):
+        # VB 요소 (모두 InputSlot=0)
+        for i, elem in enumerate(merged_elements):
             fmt_lines.append(f"element[{i}]:")
             fmt_lines.append(f"  SemanticName: {elem.semantic_name}")
             fmt_lines.append(f"  SemanticIndex: {elem.semantic_index}")
             fmt_lines.append(f"  Format: {elem.format_type}")
-            fmt_lines.append(f"  InputSlot: {elem.input_slot}")
+            fmt_lines.append(f"  InputSlot: 0")
             fmt_lines.append(f"  AlignedByteOffset: {elem.byte_offset}")
             fmt_lines.append(f"  InputSlotClass: per-vertex")
             fmt_lines.append(f"  InstanceDataStepRate: 0")
@@ -426,7 +518,7 @@ class EFMIExtractor:
         return "\n".join(fmt_lines) + "\n"
 
     def _calculate_vg_count(self, vb0_buf: BufferInfo) -> int:
-        """VG 수 계산 (BLENDINDICES에서)"""
+        """VG 수 계산 (BLENDINDICES에서) - 하위 호환용"""
         try:
             vb_data = extract_vertices_numpy(
                 str(vb0_buf.buf_path),
@@ -439,6 +531,30 @@ class EFMIExtractor:
                 return int(blendindices.max()) + 1
         except Exception:
             pass
+
+        return 0
+
+    def _calculate_vg_count_from_dc(self, dc: DrawCallInfo) -> int:
+        """VG 수 계산 - Draw Call의 VB2 슬롯에서 BLENDINDICES 추출"""
+        # VB2에서 BLENDINDICES 추출 시도
+        vb2_buf = dc.buffers.get('VB2')
+        if vb2_buf:
+            try:
+                vb_data = extract_vertices_numpy(
+                    str(vb2_buf.buf_path),
+                    str(vb2_buf.txt_path),
+                    target_slot=2,
+                )
+                blendindices = vb_data.get('BLENDINDICES')
+                if blendindices is not None:
+                    return int(blendindices.max()) + 1
+            except Exception:
+                pass
+
+        # VB0에서도 시도 (일부 모델은 단일 VB)
+        vb0_buf = dc.buffers.get('VB0')
+        if vb0_buf:
+            return self._calculate_vg_count(vb0_buf)
 
         return 0
 
