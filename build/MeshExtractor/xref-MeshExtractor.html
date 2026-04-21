@@ -4851,6 +4851,17 @@ imported by:
 </div>
 
 <div class="node">
+  <a name="buffer_builder"></a>
+  <a target="code" href="" type="text/plain"><tt>buffer_builder</tt></a>
+<span class="moduletype">MissingModule</span>  <div class="import">
+imported by:
+    <a href="#efmi_export.exporter">efmi_export.exporter</a>
+
+  </div>
+
+</div>
+
+<div class="node">
   <a name="builtins"></a>
   <tt>builtins</tt> <span class="moduletype"><i>(builtin module)</i></span>  <div class="import">
 imported by:
@@ -5585,6 +5596,17 @@ imported by:
 </div>
 
 <div class="node">
+  <a name="data_model"></a>
+  <a target="code" href="" type="text/plain"><tt>data_model</tt></a>
+<span class="moduletype">MissingModule</span>  <div class="import">
+imported by:
+    <a href="#efmi_export.buffer_builder">efmi_export.buffer_builder</a>
+
+  </div>
+
+</div>
+
+<div class="node">
   <a name="dataclasses"></a>
   <a target="code" href="///C:/Users/yein/AppData/Roaming/uv/python/cpython-3.12.12-windows-x86_64-none/Lib/dataclasses.py" type="text/plain"><tt>dataclasses</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
@@ -5775,19 +5797,18 @@ imported by:
   <a target="code" href="///C:/Users/yein/PycharmProjects/%EC%97%94%EB%93%9C%ED%95%84%EB%93%9C%EB%A9%94%EC%89%AC%EC%B6%94%EC%B6%9C%EC%8B%9C%EB%8F%844/efmi_export/buffer_builder.py" type="text/plain"><tt>efmi_export.buffer_builder</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
-    <a href="#efmi_export">efmi_export</a>
- &#8226;   <a href="#efmi_export.data_model">efmi_export.data_model</a>
- &#8226;   <a href="#efmi_export.tbn_encoding">efmi_export.tbn_encoding</a>
+    <a href="#data_model">data_model</a>
+ &#8226;   <a href="#efmi_export">efmi_export</a>
  &#8226;   <a href="#mesh_parser">mesh_parser</a>
  &#8226;   <a href="#numpy">numpy</a>
  &#8226;   <a href="#pathlib">pathlib</a>
+ &#8226;   <a href="#tbn_encoding">tbn_encoding</a>
  &#8226;   <a href="#typing">typing</a>
 
   </div>
   <div class="import">
 imported by:
-    <a href="#efmi_export.exporter">efmi_export.exporter</a>
- &#8226;   <a href="#mesh_extractor_gui.py">mesh_extractor_gui.py</a>
+    <a href="#mesh_extractor_gui.py">mesh_extractor_gui.py</a>
 
   </div>
 
@@ -5808,7 +5829,6 @@ imports:
   <div class="import">
 imported by:
     <a href="#efmi_export">efmi_export</a>
- &#8226;   <a href="#efmi_export.buffer_builder">efmi_export.buffer_builder</a>
  &#8226;   <a href="#mesh_extractor_gui.py">mesh_extractor_gui.py</a>
 
   </div>
@@ -5820,12 +5840,12 @@ imported by:
   <a target="code" href="///C:/Users/yein/PycharmProjects/%EC%97%94%EB%93%9C%ED%95%84%EB%93%9C%EB%A9%94%EC%89%AC%EC%B6%94%EC%B6%9C%EC%8B%9C%EB%8F%844/efmi_export/exporter.py" type="text/plain"><tt>efmi_export.exporter</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
-    <a href="#dataclasses">dataclasses</a>
+    <a href="#buffer_builder">buffer_builder</a>
+ &#8226;   <a href="#dataclasses">dataclasses</a>
  &#8226;   <a href="#efmi_export">efmi_export</a>
- &#8226;   <a href="#efmi_export.buffer_builder">efmi_export.buffer_builder</a>
- &#8226;   <a href="#efmi_export.ini_template">efmi_export.ini_template</a>
- &#8226;   <a href="#efmi_export.metadata">efmi_export.metadata</a>
+ &#8226;   <a href="#ini_template">ini_template</a>
  &#8226;   <a href="#mesh_parser">mesh_parser</a>
+ &#8226;   <a href="#metadata">metadata</a>
  &#8226;   <a href="#os">os</a>
  &#8226;   <a href="#pathlib">pathlib</a>
  &#8226;   <a href="#re">re</a>
@@ -5859,8 +5879,7 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#efmi_export.exporter">efmi_export.exporter</a>
- &#8226;   <a href="#mesh_extractor_gui.py">mesh_extractor_gui.py</a>
+    <a href="#mesh_extractor_gui.py">mesh_extractor_gui.py</a>
 
   </div>
 
@@ -5881,7 +5900,6 @@ imports:
   <div class="import">
 imported by:
     <a href="#efmi_export">efmi_export</a>
- &#8226;   <a href="#efmi_export.exporter">efmi_export.exporter</a>
  &#8226;   <a href="#mesh_extractor_gui.py">mesh_extractor_gui.py</a>
 
   </div>
@@ -5900,8 +5918,7 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#efmi_export.buffer_builder">efmi_export.buffer_builder</a>
- &#8226;   <a href="#mesh_extractor_gui.py">mesh_extractor_gui.py</a>
+    <a href="#mesh_extractor_gui.py">mesh_extractor_gui.py</a>
 
   </div>
 
@@ -5922,7 +5939,9 @@ imports:
  &#8226;   <a href="#pathlib">pathlib</a>
  &#8226;   <a href="#re">re</a>
  &#8226;   <a href="#struct">struct</a>
+ &#8226;   <a href="#sys">sys</a>
  &#8226;   <a href="#time">time</a>
+ &#8226;   <a href="#traceback">traceback</a>
  &#8226;   <a href="#typing">typing</a>
 
   </div>
@@ -9628,6 +9647,7 @@ imports:
  &#8226;   <a href="#importlib">importlib</a>
  &#8226;   <a href="#importlib._bootstrap">importlib._bootstrap</a>
  &#8226;   <a href="#importlib._bootstrap_external">importlib._bootstrap_external</a>
+ &#8226;   <a href="#importlib.machinery">importlib.machinery</a>
  &#8226;   <a href="#sys">sys</a>
  &#8226;   <a href="#warnings">warnings</a>
 
@@ -9761,7 +9781,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#importlib.abc">importlib.abc</a>
+    <a href="#importlib">importlib</a>
+ &#8226;   <a href="#importlib.abc">importlib.abc</a>
  &#8226;   <a href="#inspect">inspect</a>
  &#8226;   <a href="#pkgutil">pkgutil</a>
  &#8226;   <a href="#py_compile">py_compile</a>
@@ -10136,6 +10157,17 @@ imported by:
  &#8226;   <a href="#pydoc">pydoc</a>
  &#8226;   <a href="#runpy">runpy</a>
  &#8226;   <a href="#zipfile">zipfile</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="ini_template"></a>
+  <a target="code" href="" type="text/plain"><tt>ini_template</tt></a>
+<span class="moduletype">MissingModule</span>  <div class="import">
+imported by:
+    <a href="#efmi_export.exporter">efmi_export.exporter</a>
 
   </div>
 
@@ -10726,6 +10758,17 @@ imports:
   <div class="import">
 imported by:
     <a href="#obj_exporter">obj_exporter</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="metadata"></a>
+  <a target="code" href="" type="text/plain"><tt>metadata</tt></a>
+<span class="moduletype">MissingModule</span>  <div class="import">
+imported by:
+    <a href="#efmi_export.exporter">efmi_export.exporter</a>
 
   </div>
 
@@ -19997,6 +20040,7 @@ imported by:
  &#8226;   <a href="#dataclasses">dataclasses</a>
  &#8226;   <a href="#dis">dis</a>
  &#8226;   <a href="#doctest">doctest</a>
+ &#8226;   <a href="#efmi_extractor">efmi_extractor</a>
  &#8226;   <a href="#email._header_value_parser">email._header_value_parser</a>
  &#8226;   <a href="#email.generator">email.generator</a>
  &#8226;   <a href="#email.iterators">email.iterators</a>
@@ -20182,6 +20226,17 @@ imports:
   <div class="import">
 imported by:
     <a href="#shutil">shutil</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="tbn_encoding"></a>
+  <a target="code" href="" type="text/plain"><tt>tbn_encoding</tt></a>
+<span class="moduletype">MissingModule</span>  <div class="import">
+imported by:
+    <a href="#efmi_export.buffer_builder">efmi_export.buffer_builder</a>
 
   </div>
 
@@ -20643,6 +20698,7 @@ imported by:
  &#8226;   <a href="#concurrent.futures.process">concurrent.futures.process</a>
  &#8226;   <a href="#doctest">doctest</a>
  &#8226;   <a href="#efmi_export.exporter">efmi_export.exporter</a>
+ &#8226;   <a href="#efmi_extractor">efmi_extractor</a>
  &#8226;   <a href="#http.cookiejar">http.cookiejar</a>
  &#8226;   <a href="#logging">logging</a>
  &#8226;   <a href="#mesh_extractor_gui.py">mesh_extractor_gui.py</a>

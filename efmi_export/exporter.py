@@ -1,5 +1,5 @@
 """
-EFMI 메인 익스포터 클래스
+EFMI 메인 익스포터 클래스 (수정: VB0/VB1/VB2 모두 처리)
 
 모든 모듈을 통합하여 최종 모드 내보내기 실행
 """
@@ -11,9 +11,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from .metadata import ExtractedObject, read_metadata
-from .buffer_builder import BufferBuilder
-from .ini_template import INIGenerator, ModInfo, BufferInfo, TextureInfo, ComponentDrawInfo
+from metadata import ExtractedObject, read_metadata
+from buffer_builder import BufferBuilder
+from ini_template import INIGenerator, ModInfo, BufferInfo, TextureInfo, ComponentDrawInfo
 from mesh_parser import MeshData
 
 
@@ -42,7 +42,7 @@ class ExportConfig:
 
 
 class EFMIExporter:
-    """EFMI 모드 익스포터"""
+    """EFMI 모드 익스포터 (수정: VB0/VB1/VB2 모두 처리)"""
 
     def __init__(self, config: ExportConfig):
         """
@@ -55,7 +55,7 @@ class EFMIExporter:
 
     def export(self, meshes: Dict[int, MeshData]) -> bool:
         """
-        모드 내보내기 실행
+        ✓ 수정: 모드 내보내기 실행 (VB0/VB1/VB2 모두 처리)
 
         Args:
             meshes: DC ID → MeshData 딕셔너리
@@ -106,7 +106,7 @@ class EFMIExporter:
                     ))
                     continue
 
-                # 버퍼 빌드
+                # ✓ 버퍼 빌드 (VB0, VB1, VB2 모두)
                 buffers = buffer_builder.build_buffers(
                     component_mesh,
                     component_id=component_id,
@@ -124,6 +124,8 @@ class EFMIExporter:
                     index_count=len(component_mesh.indices),
                     index_offset=index_offset,
                     vertex_count=len(component_mesh.vertices),
+                    # ✓ VB1, VB2 확인
+                    has_vb1=f'Component{component_id}_VB1' in buffers,
                     has_vb2=f'Component{component_id}_VB2' in buffers,
                     has_lod=has_lod,
                     lod_vb0_hash=lod_vb0_hash,
@@ -137,6 +139,7 @@ class EFMIExporter:
                 index_offset += len(component_mesh.indices)
 
                 print(f"  Component {component_id}: {draw_info.vertex_count} vertices, {draw_info.index_count} indices")
+                print(f"    Buffers: VB0 ✓, VB1 {'✓' if draw_info.has_vb1 else '✗'}, VB2 {'✓' if draw_info.has_vb2 else '✗'}")
 
             # 5. 텍스처 수집
             textures = self._collect_textures(extracted_object)
@@ -158,15 +161,27 @@ class EFMIExporter:
                 comment_ini=self.config.comment_ini,
             )
 
-            # 버퍼 추가
+            # ✓ 버퍼 추가 (VB0, VB1, VB2 모두)
             for buffer_name, buffer in all_buffers.items():
-                buffer_info = BufferInfo(
-                    name=buffer_name,
-                    stride=buffer.layout.stride,
-                    filename=f"{buffer_name}.buf",
-                    format_str="R16_UINT" if buffer_name.endswith('_IB') else None,
-                )
+                if 'IB' in buffer_name:
+                    buffer_info = BufferInfo(
+                        name=buffer_name,
+                        stride=buffer.layout.stride,
+                        filename=f"{buffer_name}.buf",
+                        format_str="R16_UINT",
+                    )
+                elif 'VB0' in buffer_name or 'VB1' in buffer_name or 'VB2' in buffer_name:
+                    buffer_info = BufferInfo(
+                        name=buffer_name,
+                        stride=buffer.layout.stride,
+                        filename=f"{buffer_name}.buf",
+                        format_str=None,
+                    )
+                else:
+                    continue
+
                 ini_generator.add_buffer(buffer_info)
+                print(f"  Added buffer: {buffer_name}")
 
             # 텍스처 추가
             for texture in textures:
@@ -180,11 +195,13 @@ class EFMIExporter:
             ini_path = self.config.mod_output_folder / 'mod.ini'
             ini_generator.write(ini_path)
 
-            # 7. 버퍼 파일 쓰기
+            # 7. ✓ 버퍼 파일 쓰기 (VB0, VB1, VB2 모두)
             for buffer_name, buffer in all_buffers.items():
                 buf_path = self.meshes_path / f"{buffer_name}.buf"
                 with open(buf_path, 'wb') as f:
                     f.write(buffer.get_bytes())
+                print(f"  Written buffer: {buf_path} ({len(buffer)} vertices)")
+
             print(f"\nWritten {len(all_buffers)} buffer files")
 
             # 8. 텍스처 복사

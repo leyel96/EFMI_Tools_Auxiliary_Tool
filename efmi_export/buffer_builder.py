@@ -1,5 +1,5 @@
 """
-버퍼 빌더 모듈
+버퍼 빌더 모듈 (수정: VB0/VB1/VB2 모두 지원)
 
 MeshData를 EFMI 형식 .buf 파일로 변환
 - Index Buffer (IB)
@@ -12,7 +12,7 @@ import numpy as np
 from typing import Dict, Tuple, Optional
 from pathlib import Path
 
-from .data_model import (
+from data_model import (
     Semantic,
     AbstractSemantic,
     BufferSemantic,
@@ -20,7 +20,7 @@ from .data_model import (
     DXGIFormat,
     NumpyBuffer,
 )
-from .tbn_encoding import encode_tbn_data_10_10_10_2
+from tbn_encoding import encode_tbn_data_10_10_10_2
 from mesh_parser import MeshData
 
 
@@ -43,7 +43,7 @@ class BufferBuilder:
         index_offset: int = 0,
     ) -> Dict[str, NumpyBuffer]:
         """
-        MeshData에서 EFMI 버퍼들 생성
+        ✓ 수정: MeshData에서 EFMI 버퍼들 생성 (VB0, VB1, VB2)
 
         Args:
             mesh: 메쉬 데이터
@@ -63,11 +63,11 @@ class BufferBuilder:
         # 2. Vertex Buffer 0 (Position + EncodedData)
         buffers[f'Component{component_id}_VB0'] = self._build_vb0(mesh, component_id)
 
-        # 3. Vertex Buffer 1 (TexCoord + Color)
+        # ✓ 3. Vertex Buffer 1 (TexCoord + Color)
         buffers[f'Component{component_id}_VB1'] = self._build_vb1(mesh, component_id)
 
-        # 4. Vertex Buffer 2 (BlendWeights + BlendIndices)
-        if mesh.vertices and mesh.vertices[0].blendweights != (0.0, 0.0, 0.0, 0.0):
+        # ✓ 4. Vertex Buffer 2 (BlendWeights + BlendIndices) - 스킨 정보 있으면
+        if mesh.vertices and self._has_skin_data(mesh.vertices):
             buffers[f'Component{component_id}_VB2'] = self._build_vb2(mesh, component_id)
 
         return buffers
@@ -93,7 +93,7 @@ class BufferBuilder:
 
     def _build_vb0(self, mesh: MeshData, component_id: int) -> NumpyBuffer:
         """
-        Vertex Buffer 0 빌드
+        ✓ Vertex Buffer 0 빌드
         - POSITION0: R32G32B32_FLOAT (12바이트)
         - ENCODEDDATA0: R32_UINT (4바이트) - 인코딩된 TBN
         """
@@ -152,7 +152,7 @@ class BufferBuilder:
 
     def _build_vb1(self, mesh: MeshData, component_id: int) -> NumpyBuffer:
         """
-        Vertex Buffer 1 빌드
+        ✓ Vertex Buffer 1 빌드
         - TEXCOORD0: R32G32_FLOAT (8바이트)
         - COLOR0: R8G8B8A8_SNORM (4바이트)
         """
@@ -165,7 +165,7 @@ class BufferBuilder:
         if self.flip_texcoord_v:
             texcoords[:, 1] = 1.0 - texcoords[:, 1]
 
-        # 색상 (기본값: 검정)
+        # 색상 (기본값)
         # COLOR는 R8G8B8A8_SNORM이므로 -1~1 범위
         # EFMI에서는 기본적으로 0값 (검정) 사용
         colors = np.zeros((vertex_count, 4), dtype=np.int8)
@@ -190,7 +190,7 @@ class BufferBuilder:
 
     def _build_vb2(self, mesh: MeshData, component_id: int) -> NumpyBuffer:
         """
-        Vertex Buffer 2 빌드
+        ✓ Vertex Buffer 2 빌드
         - BLENDWEIGHTS0: R16_UNORM × 4 (8바이트)
         - BLENDINDICES0: R8_UINT × 4 (4바이트)
         """
@@ -230,6 +230,17 @@ class BufferBuilder:
         buffer.data['BLENDINDICES'] = blendindices.reshape(-1, 4)
 
         return buffer
+
+    def _has_skin_data(self, vertices) -> bool:
+        """메시가 스킨 정보를 가지고 있는지 확인"""
+        if not vertices:
+            return False
+
+        for v in vertices[:10]:  # 처음 10개만 확인
+            if any(w > 0 for w in v.blendweights):
+                return True
+
+        return False
 
     def _compute_tangents(
         self,
@@ -279,7 +290,7 @@ class BufferBuilder:
         output_dir: Path
     ):
         """
-        버퍼들을 .buf 파일로 저장
+        ✓ 수정: 버퍼들을 .buf 파일로 저장 (VB0, VB1, VB2 모두)
 
         Args:
             buffers: 버퍼 딕셔너리
